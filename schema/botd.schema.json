@@ -1,0 +1,436 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BotdConfig",
+  "description": "Root `botd.json` document.",
+  "type": "object",
+  "properties": {
+    "account": {
+      "description": "Game account: server, auth mode, credential reference.",
+      "$ref": "#/$defs/AccountConfig"
+    },
+    "autostart": {
+      "description": "Start `settings.active_module` immediately after attach.",
+      "type": "boolean",
+      "default": false
+    },
+    "bot": {
+      "description": "Instance identity assigned by the orchestrator.",
+      "$ref": "#/$defs/BotIdentity"
+    },
+    "client": {
+      "description": "Game client selection: `\"packet\"` or `\"flash\"`.",
+      "$ref": "#/$defs/ClientConfig"
+    },
+    "control": {
+      "description": "Managed mode: orchestrator control-plane link. Absent = standalone\nsingle-process operation (phase 1a).",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ControlConfig"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "handoff": {
+      "description": "Graceful-handoff budgets.",
+      "$ref": "#/$defs/HandoffConfig"
+    },
+    "health": {
+      "description": "Local health endpoints.",
+      "$ref": "#/$defs/HealthConfig"
+    },
+    "network": {
+      "description": "Egress networking.",
+      "$ref": "#/$defs/NetworkConfig"
+    },
+    "panel": {
+      "description": "Web panel link (Agent Protocol v1 over WebSocket).",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PanelConfig"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "schema": {
+      "description": "Config schema version; must be `1`.",
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "settings": {
+      "description": "Module/behavior settings — the exact `modules.json` (`BotSettings`)\nshape the GUI persists. `{}`/absent uses `BotSettings::default()`.",
+      "default": null
+    },
+    "state_dir": {
+      "description": "Local state directory: statistics journals, the stat outbox and later\nhandoff snapshots live under here.",
+      "type": "string",
+      "default": "./botd-state"
+    },
+    "telemetry": {
+      "description": "Telemetry export (OTLP).",
+      "$ref": "#/$defs/TelemetryConfig"
+    },
+    "testing": {
+      "description": "Test-only endpoint overrides for the mock game server. Must stay\nabsent in production configs.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TestingConfig"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "vault": {
+      "description": "Vault backend used by `vault` secret references.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VaultConfig"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "bot",
+    "account",
+    "client"
+  ],
+  "$defs": {
+    "AccountConfig": {
+      "type": "object",
+      "properties": {
+        "auth": {
+          "description": "Credential shape expected from `credentials`.",
+          "$ref": "#/$defs/AuthMode"
+        },
+        "credentials": {
+          "description": "Where the credentials live — never inline.",
+          "$ref": "#/$defs/SecretRef"
+        },
+        "server": {
+          "description": "Backpage instance, e.g. `int1.darkorbit.com` (`int1` also accepted).",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "server",
+        "auth",
+        "credentials"
+      ]
+    },
+    "AuthMode": {
+      "description": "`account.auth` — which credential shape the credentials file holds.",
+      "oneOf": [
+        {
+          "description": "`{\"username\", \"password\"}` (or `user:pass`) → Backpage password login.",
+          "type": "string",
+          "const": "password"
+        },
+        {
+          "description": "`{\"dosid\"}` (or a raw dosid) → reuse an issued session id.",
+          "type": "string",
+          "const": "session"
+        }
+      ]
+    },
+    "BotIdentity": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Stable bot identifier (e.g. `bot_01h…`); survives restarts.",
+          "type": "string"
+        },
+        "label": {
+          "description": "Optional display label.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        },
+        "tenant": {
+          "description": "Owning tenant/user.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "tenant"
+      ]
+    },
+    "ClientConfig": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "description": "`\"packet\"` or `\"flash\"` (Linux Pepper host with a virtual display).",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "kind"
+      ]
+    },
+    "ControlConfig": {
+      "type": "object",
+      "properties": {
+        "endpoint": {
+          "description": "Orchestrator gateway base URL for the control stream (`http(s)://`).\nThe operator renders no endpoint — pods resolve it from the\n`XENOMIT_CONTROL_ENDPOINT` env var the backend injects.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        },
+        "token": {
+          "description": "Service-account token presented to the control stream.",
+          "$ref": "#/$defs/SecretRef"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "token"
+      ]
+    },
+    "HandoffConfig": {
+      "type": "object",
+      "properties": {
+        "checkpoint_interval_s": {
+          "description": "Periodic checkpoint cadence while running.",
+          "type": "integer",
+          "format": "uint64",
+          "default": 15,
+          "minimum": 0
+        },
+        "drain_deadline_s": {
+          "description": "Graceful drain budget — SIGTERM to clean disconnect.",
+          "type": "integer",
+          "format": "uint64",
+          "default": 600,
+          "minimum": 0
+        },
+        "hard_deadline_s": {
+          "description": "Hard abort ceiling; the supervisor escalates past this.",
+          "type": "integer",
+          "format": "uint64",
+          "default": 1800,
+          "minimum": 0
+        },
+        "restore_policy": {
+          "description": "Snapshot restore policy at Activate.",
+          "$ref": "#/$defs/RestorePolicy"
+        }
+      },
+      "additionalProperties": false
+    },
+    "HealthConfig": {
+      "type": "object",
+      "properties": {
+        "bind": {
+          "description": "`host:port` for `/startupz` `/readyz` `/livez` (localhost only).",
+          "type": "string",
+          "default": "127.0.0.1:8080"
+        }
+      },
+      "additionalProperties": false
+    },
+    "NetworkConfig": {
+      "type": "object",
+      "properties": {
+        "proxy": {
+          "description": "Egress proxy definition secret: `{\"scheme\",\"host\",\"port\",\"username\",\n\"password\"}` or `{\"url\": \"socks5://user:pass@host:1080\"}`.\nThe operator renders `{\"mode\": \"fixed|pool\", \"vault\": {\"path\": …}}`\n— the policy key is ignored here; the pool/fixed decision is the\ncontroller's, the pod only sees the resolved secret reference.",
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SecretRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "require_proxy": {
+          "description": "Refuse to arm when no usable proxy is configured (exit 69).",
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "PanelConfig": {
+      "type": "object",
+      "properties": {
+        "base_url": {
+          "description": "Panel base URL (`http(s)://…` or `ws(s)://…`; a bare host means wss).\nPods without panel pairing leave it unset — the link stays disabled.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        },
+        "instance_token": {
+          "description": "Permanent instance token minted by panel pairing.",
+          "$ref": "#/$defs/SecretRef"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "instance_token"
+      ]
+    },
+    "RestorePolicy": {
+      "description": "`handoff.restore_policy` — what a bad or missing snapshot means at\nActivate (docs/03 §3.5).",
+      "oneOf": [
+        {
+          "description": "Restore what parses; on corruption log a warning and start fresh.",
+          "type": "string",
+          "const": "best_effort"
+        },
+        {
+          "description": "A clean snapshot that cannot be restored aborts the pod (exit 70)\ninstead of silently starting at spawn.",
+          "type": "string",
+          "const": "strict"
+        }
+      ]
+    },
+    "SecretRef": {
+      "description": "Reference to secret material outside the config.",
+      "oneOf": [
+        {
+          "description": "Vault KV path — resolved through the configured `vault` block.",
+          "type": "object",
+          "properties": {
+            "vault": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "description": "KV v2 data path, e.g. `secret/data/bots/<bot-id>/account`.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "path"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "vault"
+          ]
+        },
+        {
+          "description": "Local file holding the secret (dev, tests, projected volumes).",
+          "type": "object",
+          "properties": {
+            "file": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "file"
+          ]
+        }
+      ]
+    },
+    "TelemetryConfig": {
+      "type": "object",
+      "properties": {
+        "otlp_endpoint": {
+          "description": "OTLP collector endpoint; `null` falls back to\n`OTEL_EXPORTER_OTLP_ENDPOINT`, unset disables export.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        }
+      },
+      "additionalProperties": false
+    },
+    "TestingConfig": {
+      "description": "Endpoint overrides that let tests target a mock game server instead of\nthe real DarkOrbit infrastructure.",
+      "type": "object",
+      "properties": {
+        "backpage_base_url": {
+          "description": "Base URL replacing `https://<account.server>/` for every Backpage\ncall, e.g. `http://127.0.0.1:8081`.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        },
+        "front_base_url": {
+          "description": "Frontpage base URL for password login; defaults to\n`backpage_base_url` then `https://www.darkorbit.com/`.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        },
+        "game_endpoint": {
+          "description": "`host:port` game endpoint replacing the `maps.php` lookup.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        }
+      },
+      "additionalProperties": false
+    },
+    "VaultAuth": {
+      "type": "object",
+      "properties": {
+        "jwt_role": {
+          "description": "Vault JWT role bound to this bot's service account.",
+          "type": "string"
+        },
+        "mount": {
+          "description": "Vault auth-mount for the JWT/k8s login (`auth/<mount>/login`).\nDefaults to `kubernetes`.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null
+        },
+        "token_file": {
+          "description": "Projected service-account token file.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "jwt_role",
+        "token_file"
+      ]
+    },
+    "VaultConfig": {
+      "type": "object",
+      "properties": {
+        "addr": {
+          "description": "Vault base URL, e.g. `https://vault.example.internal:8200`.",
+          "type": "string"
+        },
+        "auth": {
+          "description": "How the bot authenticates to Vault.",
+          "$ref": "#/$defs/VaultAuth"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "addr",
+        "auth"
+      ]
+    }
+  }
+}

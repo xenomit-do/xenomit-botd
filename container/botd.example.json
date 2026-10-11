@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "bot": {
+    "id": "flash-local",
+    "tenant": "local"
+  },
+  "account": {
+    "server": "int1.darkorbit.com",
+    "auth": "session",
+    "credentials": {
+      "file": "/run/secrets/account.json"
+    }
+  },
+  "client": {
+    "kind": "flash"
+  },
+  "state_dir": "/botd-state",
+  "settings": {
+    "active_module": "kill_collect"
+  },
+  "autostart": true
+}
