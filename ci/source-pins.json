@@ -1,0 +1,45 @@
+{
+  "$schema-comment": "Immutable source pins for the botd image build. ci/checkout-sources.sh materializes each repository under the sibling directory expected by the Dockerfile (build context = parent workspace). xenomit-botd itself is checked out at GITHUB_SHA, not pinned here.",
+  "pins": {
+    "xenomit-backpage": {
+      "repository": "xenomit-do/xenomit-backpage",
+      "sha": "a7d1588f397cd41fd945cf90fa2c2c08f902ec2b"
+    },
+    "xenomit-behavior-engine": {
+      "repository": "xenomit-do/xenomit-behavior-engine",
+      "sha": "b9aa9f57488854111f97b7bdd4f44fc6d15a0c05"
+    },
+    "xenomit-bot-runtime": {
+      "repository": "xenomit-do/xenomit-bot-runtime",
+      "sha": "3de8e72fc87092f28de517a9664f34453cac2748"
+    },
+    "xenomit-core": {
+      "repository": "xenomit-do/xenomit-core",
+      "sha": "6a5b293820645754b848abec4269a09a36478579"
+    },
+    "xenomit-flash-client": {
+      "repository": "xenomit-do/xenomit-flash-client",
+      "sha": "09391a5a2c7b73670ede40c4243db71728ab5722"
+    },
+    "xenomit-flash-client-linux": {
+      "repository": "xenomit-do/xenomit-flash-client-linux",
+      "sha": "5d0d3592d43a58f6b6a334beecc9944b646f21e1"
+    },
+    "xenomit-game-api": {
+      "repository": "xenomit-do/xenomit-game-api",
+      "sha": "60c27a5c48fbae0817c2dc8d205fdffda61ea60d"
+    },
+    "xenomit-mock-game": {
+      "repository": "xenomit-do/xenomit-mock-game",
+      "sha": "7955c7a839b7807823a0b696ff683daf3f9c9592"
+    },
+    "xenomit-orchestrator": {
+      "repository": "xenomit-do/xenomit-orchestrator",
+      "sha": "e3e4588c6f01e7b0af8919c89ce2520b86725119"
+    },
+    "xenomit-packet-client": {
+      "repository": "xenomit-do/xenomit-packet-client",
+      "sha": "d1fd296b4b101a5f96e021ff7a1a0162c560fe54"
+    }
+  }
+}
