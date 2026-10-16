@@ -617,6 +617,7 @@ dependencies = [
 [[package]]
 name = "fleet-types"
 version = "0.1.0"
+source = "git+https://github.com/xenomit-do/xenomit-orchestrator?tag=v0.1.0#7499ece493bc970c5ffc596a44a3333097c005d0"
 dependencies = [
  "async-trait",
  "chrono",
@@ -3840,6 +3841,7 @@ checksum = "3ad82d2a33cdc9674dc7465672f271e096168fcdbe0f799d9e6db8c5892679dc"
 [[package]]
 name = "xenomit-behavior-engine"
 version = "0.1.0"
+source = "git+https://github.com/xenomit-do/xenomit-behavior-engine?tag=v0.1.0#17acd436f48eb4fbffee44b0f8444e5be6c186dd"
 dependencies = [
  "serde",
  "serde_json",
@@ -3850,6 +3852,7 @@ dependencies = [
 [[package]]
 name = "xenomit-bot-runtime"
 version = "0.1.0"
+source = "git+https://github.com/xenomit-do/xenomit-bot-runtime?tag=v0.1.0#3d2bb9d16ba852d08366019a1415d3042dec4f16"
 dependencies = [
  "flate2",
  "regex",
@@ -3898,6 +3901,7 @@ dependencies = [
 [[package]]
 name = "xenomit-game-api"
 version = "0.1.0"
+source = "git+https://github.com/xenomit-do/xenomit-game-api?tag=v0.1.0#60c27a5c48fbae0817c2dc8d205fdffda61ea60d"
 dependencies = [
  "roxmltree",
  "serde",
@@ -3909,6 +3913,7 @@ dependencies = [
 [[package]]
 name = "xenomit-mock-game"
 version = "0.1.0"
+source = "git+https://github.com/xenomit-do/xenomit-mock-game?tag=v0.1.0#3e199d9fd526bc19a15eb0a2c43a47d72d21d873"
 dependencies = [
  "base64 0.22.1",
  "serde",
@@ -3920,6 +3925,7 @@ dependencies = [
 [[package]]
 name = "xenomit-packet-client"
 version = "0.1.0"
+source = "git+https://github.com/xenomit-do/xenomit-packet-client?tag=v0.1.0#9be2dd2ce1229aebfc0fae5bb193de0c55430939"
 dependencies = [
  "base64 0.22.1",
  "serde_json",
@@ -3931,6 +3937,7 @@ dependencies = [
 [[package]]
 name = "xenomit_backpage"
 version = "0.1.0"
+source = "git+https://github.com/xenomit-do/xenomit-backpage?tag=v0.1.0#a7d1588f397cd41fd945cf90fa2c2c08f902ec2b"
 dependencies = [
  "base64 0.22.1",
  "flate2",
@@ -3948,6 +3955,7 @@ dependencies = [
 [[package]]
 name = "xenomit_core"
 version = "0.1.0"
+source = "git+https://github.com/xenomit-do/xenomit-core?tag=v0.1.0#6a5b293820645754b848abec4269a09a36478579"
 dependencies = [
  "opentelemetry",
  "opentelemetry-appender-tracing",
