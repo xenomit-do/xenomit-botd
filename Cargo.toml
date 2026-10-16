@@ -16,23 +16,23 @@ tokio-stream = { version = "0.1", features = ["sync"] }
 tonic = { version = "0.14", default-features = false, features = ["transport", "channel", "codegen"] }
 tonic-prost = "0.14"
 reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json"] }
-fleet-types = { path = "../xenomit-orchestrator/fleet-types" }
+fleet-types = { git = "https://github.com/xenomit-do/xenomit-orchestrator", tag = "v0.1.0", package = "fleet-types" }
 async-trait = "0.1"
-xenomit-bot-runtime = { path = "../xenomit-bot-runtime" }
-xenomit-packet-client = { path = "../xenomit-packet-client" }
-xenomit_backpage = { path = "../xenomit-backpage" }
-xenomit-behavior-engine = { path = "../xenomit-behavior-engine" }
-xenomit-game-api = { path = "../xenomit-game-api" }
-xenomit_core = { path = "../xenomit-core" }
+xenomit-bot-runtime = { git = "https://github.com/xenomit-do/xenomit-bot-runtime", tag = "v0.1.0" }
+xenomit-packet-client = { git = "https://github.com/xenomit-do/xenomit-packet-client", tag = "v0.1.0" }
+xenomit_backpage = { git = "https://github.com/xenomit-do/xenomit-backpage", tag = "v0.1.0" }
+xenomit-behavior-engine = { git = "https://github.com/xenomit-do/xenomit-behavior-engine", tag = "v0.1.0" }
+xenomit-game-api = { git = "https://github.com/xenomit-do/xenomit-game-api", tag = "v0.1.0" }
+xenomit_core = { git = "https://github.com/xenomit-do/xenomit-core", tag = "v0.1.0" }
 
 [dev-dependencies]
 tempfile = "3"
 # Test builds get the in-memory OTLP capture (`xenomit_core::logging::testing`).
-xenomit_core = { path = "../xenomit-core", features = ["testing"] }
+xenomit_core = { git = "https://github.com/xenomit-do/xenomit-core", tag = "v0.1.0", features = ["testing"] }
 tokio = { version = "1", features = ["rt-multi-thread", "sync", "time", "net", "io-util", "macros"] }
-xenomit-mock-game = { path = "../xenomit-mock-game" }
-xenomit-bot-runtime = { path = "../xenomit-bot-runtime" }
-xenomit-game-api = { path = "../xenomit-game-api" }
+xenomit-mock-game = { git = "https://github.com/xenomit-do/xenomit-mock-game", tag = "v0.1.0" }
+xenomit-bot-runtime = { git = "https://github.com/xenomit-do/xenomit-bot-runtime", tag = "v0.1.0" }
+xenomit-game-api = { git = "https://github.com/xenomit-do/xenomit-game-api", tag = "v0.1.0" }
 sysinfo = "0.31"
 axum = "0.8"
 
